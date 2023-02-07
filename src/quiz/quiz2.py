@@ -20,7 +20,7 @@ from emora_stdm import DialogueFlow
 transitions = {
     'state': 'start',
     '`Hello, how can I help you?`': {
-        'haircut': {
+        '{haircut, hair cut, hair cuts, [cut, hair]}': {
             '`Sure. What date and time are you looking for?`' :{
                 '{[monday,10,am], [monday,1,pm], [monday,2,pm], [tuesday,2,pm]}':{
                    '`Your appointment is set. See you!`' :'end'
@@ -30,7 +30,7 @@ transitions = {
                 },
                     },
         },
-        'hair coloring': {
+        '{[hair, coloring], [color, hair]}': {
             '`Sure. What date and time are you looking for?`': {
                 '{[wednesday, 10,am], [wednesday, 11, am], [wednesday,1,pm], [thursday,10,am], [thursday,11, am]}': {
                     '`Your appointment is set. See you!`': 'end'
@@ -41,7 +41,7 @@ transitions = {
             },
 
         },
-        'perms': {
+        '{perms, perm}': {
             '`Sure. What date and time are you looking for?`': {
                 '{[friday,10, am], [friday, 11, am], [friday, 1, pm], [friday, 2, pm], [saturday, 10, am], [saturday,2, pm]}': {
                     '`Your appointment is set. See you!`': 'end'
