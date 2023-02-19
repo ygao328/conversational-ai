@@ -6,7 +6,7 @@
         "comedy": ["toy story", "the incredibles", "back to the future", "ghostbusters", "the hangover", "bridesmaids", "mean girls", "forgetting sarah marshall", "crazy, stupid, love.", "the big short"],
         "animation": ["finding nemo", "the lion king", "frozen", "aladdin", "beauty and the beast", "the little mermaid", "up", "inside out"],
         "fantasy": ["the lord of the rings: the fellowship of the ring", "the lord of the rings: the two towers", "harry potter and the sorcerer's stone", "the matrix", "the twilight saga: eclipse", "the twilight saga: breaking dawn - part 1", "the twilight saga: breaking dawn - part 2", "divergent", "insurgent", "allegiant"],
-        "horror/thriller": ["the silence of the lambs", "get out", "black panther", "bohemian rhapsody", "the proposal", "the notebook", "the fault in our stars", "the maze runner", "the hunger games: mockingjay - part 1", "the hunger games: mockingjay - part 2"],
+        "horror/thriller": ["the silence of the lambs", "get out", "black panther", "bohemian rhapsody", "the proposal", "the notebook", "the fault in our stars", "the maze runner", "the hunger games: mockingjay - part 1", "the hunger games: mockingjay - part 2"]
             },
 
     "expressions": {
