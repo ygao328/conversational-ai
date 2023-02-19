@@ -1,0 +1,15 @@
+{
+    "ontology": {
+        "movie": ["action/adventure", "drama", "comedy", "animation", "fantasy", "horror/thriller"],
+        "action/adventure": ["star wars: episode iv - a new hope", "jaws", "jurassic park", "indiana jones and the raiders of the lost ark", "the terminator", "gladiator", "the hobbit: an unexpected journey", "the hunger games", "the revenant", "dunkirk", "interstellar", "inception", "the martian", "american sniper", "fury", "sully", "wonder woman", "avengers: endgame", "joker"],
+        "drama": ["gone with the wind", "the godfather", "forrest gump", "titanic", "the shawshank redemption", "the departed", "goodfellas", "the godfather part ii", "schindler's list", "the green mile", "saving private ryan", "the lord of the rings: the return of the king", "the social network", "la la land", "the shape of water", "moonlight", "the irishman", "once upon a time in hollywood", "a star is born", "the wolf of wall street"],
+        "comedy": ["toy story", "the incredibles", "back to the future", "ghostbusters", "the hangover", "bridesmaids", "mean girls", "forgetting sarah marshall", "crazy, stupid, love.", "the big short"],
+        "animation": ["finding nemo", "the lion king", "frozen", "aladdin", "beauty and the beast", "the little mermaid", "up", "inside out"],
+        "fantasy": ["the lord of the rings: the fellowship of the ring", "the lord of the rings: the two towers", "harry potter and the sorcerer's stone", "the matrix", "the twilight saga: eclipse", "the twilight saga: breaking dawn - part 1", "the twilight saga: breaking dawn - part 2", "divergent", "insurgent", "allegiant"],
+        "horror/thriller": ["the silence of the lambs", "get out", "black panther", "bohemian rhapsody", "the proposal", "the notebook", "the fault in our stars", "the maze runner", "the hunger games: mockingjay - part 1", "the hunger games: mockingjay - part 2"],
+            },
+
+    "expressions": {
+        "movie": ["film","story"]
+    }
+}
