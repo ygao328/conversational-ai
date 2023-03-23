@@ -18,8 +18,20 @@ __author__ = 'Yifei Gao'
 from emora_stdm import DialogueFlow
 from emora_stdm import Macro, Ngrams
 from typing import Dict, Any, List
+import pickle
 import re
 
+
+def save(df: DialogueFlow, varfile: str):
+    df.run()
+    d = {k: v for k, v in df.vars().items() if not k.startswith('_')}
+    pickle.dump(d, open(varfile, 'wb'))
+
+def load(df: DialogueFlow, varfile: str):
+    d = pickle.load(open(varfile, 'rb'))
+    df.vars().update(d)
+    df.run()
+    save(df, varfile)
 class MacroGetName(Macro):
     def run(self, ngrams: Ngrams, vars: Dict[str, Any], args: List[Any]):
         r = re.compile(r"(.*is|.*called|.*am|.*call me|.*mr|.*mrs|.*ms|.*dr)?(?:^|\s)([a-z']+)(?:\s([a-z']+))?") #adjust for other words in front of name
@@ -83,8 +95,6 @@ class MacroGetThoughts(Macro):
 
 import random
 class MovieTitle(Macro):
-    used_titles = []
-
     def run(self, ngrams: Ngrams, vars: Dict[str, Any], args: List[Any]):
         titles = ['The Godfather', 'The Shawshank Redemption', 'The Dark Knight', 'Schindler\'s List', 'Forrest Gump',
                   'The Lord of the Rings: The Return of the King', 'Star Wars: Episode V - The Empire Strikes Back',
@@ -92,11 +102,16 @@ class MovieTitle(Macro):
                   'Fight Club', 'Inception', 'The Lord of the Rings: The Two Towers', 'The Matrix', 'Goodfellas',
                   'Seven Samurai', 'City of God', 'The Silence of the Lambs', 'It\'s a Wonderful Life',
                   'Life is Beautiful']
-
+        key = 'USEDMOVIETITLES'+ vars['FIRSTNAME']
+        if key not in vars.keys():
+            vars[key]=[]
+        used_titles = vars[key]
         while True:
             random_title = random.choice(titles)
-            if random_title not in self.used_titles:
-                self.used_titles.append(random_title)
+            if random_title not in used_titles:
+                used_titles.append(random_title)
+                vars['MOVIETITLE'+ vars['FIRSTNAME']]=random_title
+                vars[key]=used_titles
                 return random_title
 class MovieDescription(Macro):
     used_genres = []
@@ -113,19 +128,22 @@ class MovieDescription(Macro):
                 return random_genre
 
 class SongTitle(Macro):
-    used_titles = []
-
     def run(self, ngrams: Ngrams, vars: Dict[str, Any], args: List[Any]):
         song_titles = ['Rolling in the Deep', 'Bohemian Rhapsody', 'Hey Jude', 'Like a Rolling Stone',
                        'I Will Always Love You', 'Imagine', 'What\'s Going On', 'Purple Haze', 'Hotel California',
                        'Billie Jean', 'Stairway to Heaven', 'Hallelujah', 'My Girl', 'Good Vibrations',
                        'Sweet Child O\' Mine',
                        'Thriller', 'Smells Like Teen Spirit', 'Let It Be', 'All Along the Watchtower', 'Born to Run']
-
+        key = 'USEDTITLES' + vars['FIRSTNAME']
+        if key not in vars.keys():
+            vars[key]=[]
+        used_titles = vars[key]
         while True:
             random_title = random.choice(song_titles)
-            if random_title not in self.used_titles:
-                self.used_titles.append(random_title)
+            if random_title not in used_titles:
+                used_titles.append(random_title)
+                vars['MOVIETITLE'+ vars['FIRSTNAME']] = random_title
+                vars[key] = used_titles
                 return random_title
 
 class SongDescription(Macro):
@@ -142,6 +160,26 @@ class SongDescription(Macro):
             if random_artist not in self.used_artists:
                 self.used_artists.append(random_artist)
                 return random_artist
+
+class MacroWhatElse(Macro):
+    def run(self, ngrams: Ngrams, vars: Dict[str, Any], args: List[Any]):
+      # vn = 'HAVE_TALK'
+      # if vn in vars and vars[vn]:
+      #  return 'What else do you want me to recommend?'
+     #  else:
+      #     vars[vn] = True
+       # #    return 'What do you want me to recommend?'
+        vn = 'MOVIETITLE'+ vars['FIRSTNAME']
+       # vn2='SONGTITLE' + vars['FIRSTNAME']
+
+        if vn in vars:
+            return 'Did you enjoy the '+ vars[vn]+ ' What else do you want me to recommend?'
+       # elif vn2 in vars:
+           # return 'Did you enjoy the' + vars[vn2]+' What else do you want me to recommend?'
+        else:
+            return 'What else do you want me to recommend?'
+
+
 class Names(Macro):
     used_names = []
 
@@ -181,7 +219,7 @@ transitions = {
     '`Hello. The time is` #TIME #NAME': {
         '#GET_NAME': {
             'state': 'good',
-            '`It\'s nice to meet you,` $FIRSTNAME `.` #WHAT_ELSE': {
+            '`Hi` $FIRSTNAME `.` #WHAT_ELSE': {
                 '[#LEM(movie)]': 'movie',
                 '[song]': 'song',
                 'error': {
@@ -197,11 +235,11 @@ transitions = {
 song_transitions = {
     'state': 'song',
     '`I would recommend `#SONGTITLE`. It is literally my jam.`':{
-        '{about, genre, information, more, [more, information]}': {
+        '[{about, genre, information, more, [more, information]}]': {
             '`The artist is` #SONGARTIST `. `': 'good'
 
         },
-        '{thank, thanks, bye}': {
+        '[{thank, thanks, bye}]': {
             '`Enjoy! And Goodbye!`': 'end'
         },
 
@@ -213,10 +251,10 @@ movie_transitions = {
     'state': 'movie',
     #if this is the first time and there is no issues caught
     '`I would recommend `#MOVIETITLE` It\'s my personal favorite.`': {
-        '{what, more, information, about}': {
+        '[{what, more, information, about}]': {
             '`The genre is` #MOVIEGENRE `.`':'good'
         },
-        '{no, thank, thanks, bye}': {
+        '[{no, thank, thanks, bye}]': {
             '`I think you would like it. Don\'t mention.`':'end'
         },
         'error':'good'
@@ -224,16 +262,6 @@ movie_transitions = {
 
 
 }
-
-
-class MacroWhatElse(Macro):
-    def run(self, ngrams: Ngrams, vars: Dict[str, Any], args: List[Any]):
-        vn = 'HAVE_TALK'
-        if vn in vars and vars[vn]:
-            return 'What else do you want me to recommend?'
-        else:
-            vars[vn] = True
-            return 'What do you want me to recommend?'
 
 
 macros = {
@@ -248,11 +276,21 @@ macros = {
     'NAME': Names()
 }
 
-df = DialogueFlow('start', end_state='end')
+
+
+df=DialogueFlow('start', end_state='end')
 df.load_transitions(transitions)
 df.load_transitions(song_transitions)
 df.load_transitions(movie_transitions)
 df.add_macros(macros)
 
+# return df
+
 if __name__ == '__main__':
-    df.run()
+    load(df, 'resources/visits.pkl')
+
+
+
+    #issues are One, I cannot save the progress I am super confused as to how to do that
+#two, not sure why the movie genre insides are not matching correctly.
+#how do you get rid of Hi its nice to meet you yifei? 
